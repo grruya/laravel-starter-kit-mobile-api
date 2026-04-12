@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+mapfile -t STAGED_PHP_FILES < <(
+    git diff --cached --name-only --diff-filter=ACM | grep -E '\.php$' || true
+)
+
+if [ ${#STAGED_PHP_FILES[@]} -eq 0 ]; then
+    exit 0
+fi
+
+echo "Running checks on staged PHP files..."
+echo
+
+echo "1. Pint"
+vendor/bin/pint --format agent "${STAGED_PHP_FILES[@]}"
+
+git add "${STAGED_PHP_FILES[@]}"
+
+echo
+echo "2. PHPStan"
+vendor/bin/phpstan analyse "${STAGED_PHP_FILES[@]}"
+
+echo
+echo "3. Rector"
+vendor/bin/rector process --dry-run "${STAGED_PHP_FILES[@]}"
+
+echo
+echo "All checks passed."
