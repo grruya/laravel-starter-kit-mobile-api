@@ -1,10 +1,21 @@
+---
+name: caveman-pr
+description: >-
+  Command-style skill for generating a pull request description. Use only when
+  the user explicitly invokes `/caveman-pr`, tags this skill, or asks for it
+  by name.
+---
+
 # Generate PR Description
+
+Manual activation only: use this skill only when the user explicitly invokes
+`/caveman-pr`, tags this skill, or asks for caveman PR mode by name.
 
 ## Overview
 
 Create a comprehensive pull request description based on the changes in this branch and format it as proper markdown for use in a GitHub PR description.
 
-You must utilize the caveman skill when writing this PR description `.agents/skill/caveman/SKILL.md`
+You must utilize the caveman skill when writing this PR description [caveman](/Users/gruja/Main/coding/ai-rules/.agents/skills/commands/caveman/SKILL.md)
 
 ## Steps
 

@@ -1,4 +1,15 @@
+---
+name: review-feature
+description: >-
+  Command-style skill for running the multi-agent feature review pipeline. Use
+  only when the user explicitly invokes `/review-feature`, tags this skill, or
+  asks for it by name.
+---
+
 # Full code review (multi-agent)
+
+Manual activation only: use this skill only when the user explicitly invokes
+`/review-feature`, tags this skill, or asks for this review command by name.
 
 Run the **code review pipeline** by orchestrating the custom Codex agents defined in `.codex/agents/`. Do not improvise a different review shape. Follow the steps, explicitly spawn each agent, wait for its result, pass outputs between steps, and push every reviewer toward concrete, evidence-backed findings instead of generic observations because subagents do not share context.
 

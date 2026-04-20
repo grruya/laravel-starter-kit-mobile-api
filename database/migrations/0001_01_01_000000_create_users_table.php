@@ -23,10 +23,19 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table): void {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
+        Schema::create('one_time_passwords', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('user_id');
+            $table->string('purpose');
+            $table->string('code_hash');
+            $table->string('device_id_hash', 64)->nullable();
+            $table->unsignedTinyInteger('attempts')->default(0);
+            $table->timestamp('sent_at');
+            $table->timestamp('expires_at');
+            $table->timestamps();
+
+            $table->unique(['user_id', 'purpose']);
+            $table->index('expires_at');
         });
 
         Schema::create('sessions', function (Blueprint $table): void {
@@ -44,8 +53,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('one_time_passwords');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('users');
     }
 };

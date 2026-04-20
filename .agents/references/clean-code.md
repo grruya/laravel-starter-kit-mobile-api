@@ -7,9 +7,7 @@
 - **Early Returns:** Avoid nested `if` statements. Use guard clauses (e.g., `if (!$condition) return;`) to keep the "happy path" at the lowest indentation level.
 - **Simplicity:** Favor simplicity over "clever" code. Avoid recursion, deep callbacks, and complex abstractions unless strictly necessary.
 - **Method Limits:** Methods should have a maximum of **4 parameters**.
-- **State Validation:** Ensure methods or classes are not performed on unintended data states. (e.g., A `cancel()` method on a `Reservation` model must first check if the status allows cancellation, throwing an exception if not).
 - **Scope:** Keep variables as close as possible to the block where they are consumed.
-- **Try and Catch:** Catch only where you can meaningfully recover or decide a different outcome — otherwise let it bubble up.
 
 ## Writing Style
 

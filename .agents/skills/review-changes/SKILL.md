@@ -1,4 +1,15 @@
+---
+name: review-changes
+description: >-
+  Command-style skill for running the multi-agent change review pipeline. Use
+  only when the user explicitly invokes `/review-changes`, tags this skill, or
+  asks for it by name.
+---
+
 # Review changes (multi-agent)
+
+Manual activation only: use this skill only when the user explicitly invokes
+`/review-changes`, tags this skill, or asks for this review command by name.
 
 Run the **change review pipeline** by orchestrating the custom Codex agents defined in `.codex/agents/`. Do not improvise a different review shape. Follow the steps, explicitly spawn each agent, wait for its result, pass outputs between steps, and push every reviewer toward concrete, evidence-backed findings instead of generic observations because subagents do not share context.
 
@@ -100,7 +111,6 @@ Execution flow:
 
 Rules:
 - only review changed files, do not review files in execution flow use them just for context
-- report findings only when the issue is in a changed file
 - do not report pre-existing issues that exist only in unchanged files
 - keep findings concrete, reachable, and tied to this change set
 

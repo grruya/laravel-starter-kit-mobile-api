@@ -26,6 +26,7 @@
 
 ## Form Requests and Validation
 
+- Use the `after` callback in Form Requests for validation checks that rely on the database or other post-basic-rule logic
 - Apply sensible min and max rules on strings (e.g., `min:3` for a name).
 - Prefer `#[CurrentUser] User $user` injection over `$request->user()`.
 

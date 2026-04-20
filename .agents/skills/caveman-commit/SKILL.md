@@ -1,6 +1,15 @@
+---
+name: caveman-commit
+description: >-
+  Command-style skill for writing ultra-compressed Conventional Commit messages.
+  Use only when the user explicitly invokes `/caveman-commit`, tags this
+  skill, or asks for it by name.
+---
+
 # Caveman commit message
 
-Ultra-compressed commit messages: preserve intent and reasoning, cut noise. **Conventional Commits.** Subject ≤50 chars when possible; body only when the “why” is not obvious.
+Manual activation only: use this skill only when the user explicitly invokes
+`/caveman-commit`, tags this skill, or asks for caveman commit mode by name.
 
 ## What to do
 

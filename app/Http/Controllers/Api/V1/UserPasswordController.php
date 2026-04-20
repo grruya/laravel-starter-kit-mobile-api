@@ -1,0 +1,56 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Actions\ConsumeOneTimePassword;
+use App\Actions\CreateUserPassword;
+use App\Enums\OneTimePasswordPurpose;
+use App\Http\Requests\CreateUserPasswordRequest;
+use App\Http\Requests\UpdateUserPasswordRequest;
+use App\Models\User;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Container\Attributes\CurrentUser;
+use Illuminate\Http\JsonResponse;
+
+final readonly class UserPasswordController
+{
+    public function store(
+        CreateUserPasswordRequest $request,
+        ConsumeOneTimePassword $consumeOneTimePassword,
+        CreateUserPassword $createUserPassword,
+    ): JsonResponse {
+        $user = $request->passwordResetUser();
+
+        $consumeOneTimePassword->handle(
+            $user,
+            OneTimePasswordPurpose::PasswordReset,
+            $request->string('code')->value(),
+            $request->string('device_id')->value(),
+        );
+
+        $createUserPassword->handle(
+            $user,
+            $request->string('password')->value(),
+        );
+
+        if (! $user->hasVerifiedEmail() && $user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+
+        return response()->json([
+            'message' => 'Password reset successfully',
+        ]);
+    }
+
+    public function update(UpdateUserPasswordRequest $request, #[CurrentUser] User $user): JsonResponse
+    {
+        $user->update(['password' => $request->string('password')->value()]);
+        $user->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Password updated successfully',
+        ]);
+    }
+}
