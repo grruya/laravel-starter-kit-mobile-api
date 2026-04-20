@@ -9,7 +9,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use SensitiveParameter;
 
-final readonly class CreateUserPassword
+final readonly class ResetUserPassword
 {
     public function handle(User $user, #[SensitiveParameter] string $password): void
     {

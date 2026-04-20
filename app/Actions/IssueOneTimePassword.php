@@ -61,9 +61,10 @@ final readonly class IssueOneTimePassword
             return null;
         });
 
-        if ($exception instanceof OneTimePasswordException) {
-            throw $exception;
-        }
+        throw_if(
+            $exception !== null,
+            $exception ?? OneTimePasswordException::invalid(),
+        );
 
         $user->notify(new OneTimePasswordNotification($purpose, $code));
     }

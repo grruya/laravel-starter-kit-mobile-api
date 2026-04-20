@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\ConsumeOneTimePassword;
-use App\Actions\CreateUserPassword;
+use App\Actions\ResetUserPassword;
 use App\Enums\OneTimePasswordPurpose;
 use App\Http\Requests\CreateUserPasswordRequest;
 use App\Http\Requests\UpdateUserPasswordRequest;
@@ -19,7 +19,7 @@ final readonly class UserPasswordController
     public function store(
         CreateUserPasswordRequest $request,
         ConsumeOneTimePassword $consumeOneTimePassword,
-        CreateUserPassword $createUserPassword,
+        ResetUserPassword $resetUserPassword,
     ): JsonResponse {
         $user = $request->passwordResetUser();
 
@@ -30,7 +30,7 @@ final readonly class UserPasswordController
             $request->string('device_id')->value(),
         );
 
-        $createUserPassword->handle(
+        $resetUserPassword->handle(
             $user,
             $request->string('password')->value(),
         );

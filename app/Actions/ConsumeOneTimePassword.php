@@ -25,50 +25,49 @@ final readonly class ConsumeOneTimePassword
         #[SensitiveParameter] string $deviceId,
     ): void {
         $exception = $this->timebox->call(
-            function (Timebox $timebox) use ($user, $purpose, $code, $deviceId): ?OneTimePasswordException {
-                return DB::transaction(function () use ($user, $purpose, $code, $deviceId, $timebox): ?OneTimePasswordException {
-                    User::query()
-                        ->whereKey($user->id)
-                        ->lockForUpdate()
-                        ->first();
+            fn(Timebox $timebox): ?OneTimePasswordException => DB::transaction(function () use ($user, $purpose, $code, $deviceId, $timebox): ?OneTimePasswordException {
+                User::query()
+                    ->whereKey($user->id)
+                    ->lockForUpdate()
+                    ->first();
 
-                    $oneTimePassword = $user->oneTimePasswords()
-                        ->where('purpose', $purpose->value)
-                        ->lockForUpdate()
-                        ->first();
+                $oneTimePassword = $user->oneTimePasswords()
+                    ->where('purpose', $purpose->value)
+                    ->lockForUpdate()
+                    ->first();
 
-                    if (! $oneTimePassword instanceof OneTimePassword) {
-                        return OneTimePasswordException::invalid();
-                    }
+                if (! $oneTimePassword instanceof OneTimePassword) {
+                    return OneTimePasswordException::invalid();
+                }
 
-                    if ($oneTimePassword->expires_at->isPast()) {
-                        $oneTimePassword->delete();
-
-                        return OneTimePasswordException::expired();
-                    }
-
-                    if (! Hash::check($code, $oneTimePassword->code_hash)) {
-                        $this->recordInvalidAttempt($oneTimePassword);
-
-                        return OneTimePasswordException::invalid();
-                    }
-
-                    if (! $this->matchesDevice($oneTimePassword, $deviceId)) {
-                        return OneTimePasswordException::differentDevice();
-                    }
-
+                if ($oneTimePassword->expires_at->isPast()) {
                     $oneTimePassword->delete();
-                    $timebox->returnEarly();
 
-                    return null;
-                });
-            },
+                    return OneTimePasswordException::expired();
+                }
+
+                if (! Hash::check($code, $oneTimePassword->code_hash)) {
+                    $this->recordInvalidAttempt($oneTimePassword);
+
+                    return OneTimePasswordException::invalid();
+                }
+
+                if (! $this->matchesDevice($oneTimePassword, $deviceId)) {
+                    return OneTimePasswordException::differentDevice();
+                }
+
+                $oneTimePassword->delete();
+                $timebox->returnEarly();
+
+                return null;
+            }),
             microseconds: Config::integer('otp.verification_timebox_in_milliseconds') * 1000,
         );
 
-        if ($exception instanceof OneTimePasswordException) {
-            throw $exception;
-        }
+        throw_if(
+            $exception !== null,
+            $exception ?? OneTimePasswordException::invalid(),
+        );
     }
 
     private function matchesDevice(OneTimePassword $oneTimePassword, string $deviceId): bool

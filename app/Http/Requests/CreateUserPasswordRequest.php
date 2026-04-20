@@ -57,9 +57,7 @@ final class CreateUserPasswordRequest extends FormRequest
 
     public function passwordResetUser(): User
     {
-        if (! $this->passwordResetUser instanceof User) {
-            throw new LogicException('Password reset user is not available.');
-        }
+        throw_unless($this->passwordResetUser instanceof User, LogicException::class, 'Password reset user is not available.');
 
         return $this->passwordResetUser;
     }

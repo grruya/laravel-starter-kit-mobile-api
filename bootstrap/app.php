@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Http\JsonResponse;
 use App\Exceptions\ApiNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -25,6 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $exceptions->render(
-            fn (NotFoundHttpException $exception, Request $request) => ApiNotFoundException::from($exception)->render($request)
+            fn (NotFoundHttpException $exception, Request $request): JsonResponse|bool => ApiNotFoundException::from($exception)->render($request)
         );
     })->create();

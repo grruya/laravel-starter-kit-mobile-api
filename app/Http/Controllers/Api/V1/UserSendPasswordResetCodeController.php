@@ -31,10 +31,8 @@ final readonly class UserSendPasswordResetCodeController
                 OneTimePasswordPurpose::PasswordReset,
                 $request->string('device_id')->value(),
             );
-        } catch (OneTimePasswordException $exception) {
-            if (! $exception->isCooldown()) {
-                throw $exception;
-            }
+        } catch (OneTimePasswordException $oneTimePasswordException) {
+            throw_unless($oneTimePasswordException->isCooldown(), $oneTimePasswordException);
         }
 
         return response()->json([

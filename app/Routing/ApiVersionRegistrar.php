@@ -14,7 +14,11 @@ final class ApiVersionRegistrar
         $versions = Config::array('api_versioning.versions');
 
         foreach ($versions as $version => $configuration) {
-            if (! is_string($version) || ! is_array($configuration)) {
+            if (! is_string($version)) {
+                continue;
+            }
+
+            if (! is_array($configuration)) {
                 continue;
             }
 
@@ -40,7 +44,7 @@ final class ApiVersionRegistrar
         }
 
         Route::prefix($version)
-            ->name("api.{$version}.")
+            ->name(sprintf('api.%s.', $version))
             ->middleware($middleware)
             ->group($routeFile);
     }

@@ -61,6 +61,9 @@ final class OneTimePassword extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return Builder<self>
+     */
     public function prunable(): Builder
     {
         return self::query()->where('expires_at', '<=', now());
