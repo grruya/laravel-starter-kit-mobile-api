@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Actions\IssueAuthToken;
-use App\Http\Requests\CreateAuthTokenRequest;
+use App\Actions\Auth\IssueAuthToken;
+use App\Http\Requests\Auth\CreateAuthTokenRequest;
 use App\Http\Resources\AuthenticatedUserResource;
 use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;

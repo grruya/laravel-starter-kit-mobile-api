@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Actions\ConsumeOneTimePassword;
-use App\Actions\ResetUserPassword;
+use App\Actions\Auth\ConsumeOneTimePassword;
+use App\Actions\Auth\ResetUserPassword;
 use App\Enums\OneTimePasswordPurpose;
-use App\Http\Requests\CreateUserPasswordRequest;
-use App\Http\Requests\UpdateUserPasswordRequest;
+use App\Http\Requests\Auth\CreateUserPasswordRequest;
+use App\Http\Requests\Auth\UpdateUserPasswordRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Container\Attributes\CurrentUser;

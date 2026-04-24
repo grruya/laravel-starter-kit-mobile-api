@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Actions\IssueOneTimePassword;
+use App\Actions\Auth\IssueOneTimePassword;
 use App\Enums\OneTimePasswordPurpose;
 use App\Exceptions\OneTimePasswordException;
-use App\Http\Requests\SendPasswordResetCodeRequest;
+use App\Http\Requests\Auth\SendPasswordResetCodeRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 

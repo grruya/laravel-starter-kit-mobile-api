@@ -2,21 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Actions\IssueOneTimePassword;
+use App\Actions\Auth\ConsumeOneTimePassword;
 use App\Enums\OneTimePasswordPurpose;
-use App\Http\Requests\SendEmailVerificationCodeRequest;
+use App\Http\Requests\Auth\VerifyEmailCodeRequest;
 use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\JsonResponse;
 
-final readonly class UserSendEmailVerificationCodeController
+final readonly class UserVerifyEmailController
 {
     public function __invoke(
-        SendEmailVerificationCodeRequest $request,
+        VerifyEmailCodeRequest $request,
         #[CurrentUser] User $user,
-        IssueOneTimePassword $issueOneTimePassword,
+        ConsumeOneTimePassword $consumeOneTimePassword,
     ): JsonResponse {
         if ($user->hasVerifiedEmail()) {
             return response()->json([
@@ -24,14 +25,19 @@ final readonly class UserSendEmailVerificationCodeController
             ]);
         }
 
-        $issueOneTimePassword->handle(
+        $consumeOneTimePassword->handle(
             $user,
             OneTimePasswordPurpose::EmailVerification,
+            $request->string('code')->value(),
             $request->string('device_id')->value(),
         );
 
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+
         return response()->json([
-            'message' => 'Verification code sent',
+            'message' => 'Email verified successfully',
         ]);
     }
 }

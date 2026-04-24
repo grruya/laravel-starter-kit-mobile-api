@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Auth;
 
 use App\Enums\OneTimePasswordPurpose;
 use App\Exceptions\OneTimePasswordException;

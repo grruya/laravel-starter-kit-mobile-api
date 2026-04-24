@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Actions\Auth\IssueOneTimePassword;
 use App\Enums\OneTimePasswordPurpose;
 use App\Models\User;
 

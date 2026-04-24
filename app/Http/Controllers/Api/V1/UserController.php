@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Actions\CreateUser;
+use App\Actions\Auth\CreateUser;
+use App\Actions\Auth\IssueAuthToken;
 use App\Actions\DeleteUser;
-use App\Actions\IssueAuthToken;
 use App\Actions\UpdateUser;
-use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\Auth\CreateUserRequest;
 use App\Http\Requests\DeleteUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\AuthenticatedUserResource;

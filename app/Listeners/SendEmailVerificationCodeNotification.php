@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
-use App\Actions\IssueOneTimePassword;
+use App\Actions\Auth\IssueOneTimePassword;
 use App\Enums\OneTimePasswordPurpose;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
