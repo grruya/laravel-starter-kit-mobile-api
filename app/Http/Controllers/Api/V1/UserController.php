@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\CreateUser;
 use App\Actions\DeleteUser;
+use App\Actions\IssueAuthToken;
 use App\Actions\UpdateUser;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\DeleteUserRequest;
@@ -18,17 +19,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final readonly class UserController
 {
-    public function store(CreateUserRequest $request, CreateUser $createUser): AuthenticatedUserResource
+    public function store(CreateUserRequest $request, CreateUser $createUser, IssueAuthToken $issueAuthToken): AuthenticatedUserResource
     {
         /** @var array<string, mixed> $attributes */
-        $attributes = $request->safe()->except('password', 'device_name');
+        $attributes = $request->safe()->only('name', 'email');
 
         $user = $createUser->handle(
             $attributes,
             $request->string('password')->value(),
         );
 
-        $token = $user->createToken($request->string('device_name')->value())->plainTextToken;
+        $token = $issueAuthToken->handle(
+            $user,
+            $request->string('device_name')->value(),
+            $request->string('device_id')->value(),
+        );
 
         return new AuthenticatedUserResource($user, $token);
     }
@@ -42,7 +47,7 @@ final readonly class UserController
 
     public function destroy(DeleteUserRequest $request, #[CurrentUser] User $user, DeleteUser $deleteUser): JsonResponse
     {
-        $user->currentAccessToken()->delete();
+        $user->tokens()->delete();
         $deleteUser->handle($user);
 
         return response()->json([

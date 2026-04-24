@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\IssueAuthToken;
 use App\Http\Requests\CreateAuthTokenRequest;
 use App\Http\Resources\AuthenticatedUserResource;
 use App\Models\User;
@@ -12,10 +13,14 @@ use Illuminate\Http\JsonResponse;
 
 final readonly class AuthTokenController
 {
-    public function store(CreateAuthTokenRequest $request): AuthenticatedUserResource
+    public function store(CreateAuthTokenRequest $request, IssueAuthToken $issueAuthToken): AuthenticatedUserResource
     {
         $user = $request->validateCredentials();
-        $token = $user->createToken($request->string('device_name')->value())->plainTextToken;
+        $token = $issueAuthToken->handle(
+            $user,
+            $request->string('device_name')->value(),
+            $request->string('device_id')->value(),
+        );
 
         return new AuthenticatedUserResource($user, $token);
     }

@@ -24,6 +24,7 @@ final class CreateAuthTokenRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'device_id' => $this->deviceIdRules(),
             'device_name' => $this->deviceNameRules(),
         ];
     }

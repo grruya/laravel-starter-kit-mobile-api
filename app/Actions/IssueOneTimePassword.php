@@ -22,8 +22,9 @@ final readonly class IssueOneTimePassword
         #[SensitiveParameter] ?string $deviceId = null,
     ): void {
         $code = '';
+        $oneTimePassword = null;
 
-        $exception = DB::transaction(function () use ($user, $purpose, $deviceId, &$code): ?OneTimePasswordException {
+        $exception = DB::transaction(function () use ($user, $purpose, $deviceId, &$code, &$oneTimePassword): ?OneTimePasswordException {
             User::query()
                 ->whereKey($user->id)
                 ->lockForUpdate()
@@ -44,7 +45,7 @@ final readonly class IssueOneTimePassword
 
             $code = $this->generateCode();
 
-            OneTimePassword::query()->updateOrCreate(
+            $oneTimePassword = OneTimePassword::query()->updateOrCreate(
                 [
                     'user_id' => $user->id,
                     'purpose' => $purpose,
@@ -66,7 +67,11 @@ final readonly class IssueOneTimePassword
             $exception ?? OneTimePasswordException::invalid(),
         );
 
-        $user->notify(new OneTimePasswordNotification($purpose, $code));
+        if (! $oneTimePassword instanceof OneTimePassword) {
+            throw OneTimePasswordException::invalid();
+        }
+
+        $user->notify(new OneTimePasswordNotification($purpose, $code, $oneTimePassword->id, $oneTimePassword->code_hash));
     }
 
     private function generateCode(): string

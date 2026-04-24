@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AuthTokenController;
-use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserPasswordController;
 use App\Http\Controllers\Api\V1\UserSendEmailVerificationCodeController;
@@ -29,8 +28,4 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::apiSingleton('user', UserController::class)->destroyable()->only(['update', 'destroy']);
 
     Route::post('logout', [AuthTokenController::class, 'destroy'])->name('auth.logout');
-});
-
-Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
-    Route::apiResource('products', ProductController::class);
 });

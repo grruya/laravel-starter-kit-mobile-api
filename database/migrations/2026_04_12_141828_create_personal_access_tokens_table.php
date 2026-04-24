@@ -19,9 +19,15 @@ return new class extends Migration
             $table->text('name');
             $table->string('token', 64)->unique();
             $table->text('abilities')->nullable();
+            $table->string('device_id_hash', 64)->nullable();
             $table->timestamp('last_used_at')->nullable();
             $table->timestamp('expires_at')->nullable()->index();
             $table->timestamps();
+
+            $table->unique(
+                ['tokenable_type', 'tokenable_id', 'device_id_hash'],
+                'personal_access_tokens_tokenable_device_unique',
+            );
         });
     }
 

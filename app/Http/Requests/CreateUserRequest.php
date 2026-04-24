@@ -35,6 +35,7 @@ final class CreateUserRequest extends FormRequest
             'password' => [
                 ...$this->passwordRules(),
             ],
+            'device_id' => $this->deviceIdRules(),
             'device_name' => $this->deviceNameRules(),
         ];
     }

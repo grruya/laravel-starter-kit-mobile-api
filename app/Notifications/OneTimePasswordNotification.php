@@ -5,20 +5,30 @@ declare(strict_types=1);
 namespace App\Notifications;
 
 use App\Enums\OneTimePasswordPurpose;
+use App\Models\OneTimePassword;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Support\Facades\Config;
 use SensitiveParameter;
+use Throwable;
 
-final class OneTimePasswordNotification extends Notification
+#[Tries(1)]
+final class OneTimePasswordNotification extends Notification implements ShouldBeEncrypted, ShouldQueue
 {
     use Queueable;
 
     public function __construct(
-        public OneTimePasswordPurpose $purpose,
-        #[SensitiveParameter] public string $code,
-    ) {}
+        private readonly OneTimePasswordPurpose $purpose,
+        #[SensitiveParameter] private readonly string $code,
+        private readonly int $oneTimePasswordId,
+        private readonly string $codeHash,
+    ) {
+        $this->afterCommit();
+    }
 
     /**
      * @return array<int, string>
@@ -50,6 +60,15 @@ final class OneTimePasswordNotification extends Notification
             ->line($line)
             ->line(sprintf('This code expires in %d %s.', $expiresInMinutes, $minuteLabel))
             ->line('If you did not request this code, you can ignore this email.');
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        OneTimePassword::query()
+            ->whereKey($this->oneTimePasswordId)
+            ->where('purpose', $this->purpose->value)
+            ->where('code_hash', $this->codeHash)
+            ->delete();
     }
 
     /**
