@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\Auth\AuthTokenController;
+use App\Http\Controllers\Api\V1\Auth\UserController;
 use App\Http\Controllers\Api\V1\Auth\UserPasswordController;
 use App\Http\Controllers\Api\V1\Auth\UserSendEmailVerificationCodeController;
 use App\Http\Controllers\Api\V1\Auth\UserSendPasswordResetCodeController;
 use App\Http\Controllers\Api\V1\Auth\UserVerifyEmailController;
-use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('register', [UserController::class, 'store'])->name('auth.register');

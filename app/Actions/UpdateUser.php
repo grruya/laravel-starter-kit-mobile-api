@@ -19,12 +19,10 @@ final readonly class UpdateUser
     {
         $emailChanged = isset($attributes['email']) && $user->email !== $attributes['email'];
 
-        $user->update([
-            ...$attributes,
-            ...($emailChanged ? ['email_verified_at' => null] : []),
-        ]);
+        $user->update($attributes);
 
         if ($emailChanged) {
+            $user->markEmailAsUnverified();
             $user->oneTimePasswords()->delete();
             $this->issueOneTimePassword->handle($user, OneTimePasswordPurpose::EmailVerification);
         }

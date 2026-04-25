@@ -13,10 +13,11 @@ final readonly class ResetUserPassword
 {
     public function handle(User $user, #[SensitiveParameter] string $password): void
     {
-        $user->update([
+        $user->forceFill([
             'password' => $password,
-            'remember_token' => Str::random(60),
-        ]);
+        ])->setRememberToken(Str::random(60));
+
+        $user->save();
 
         $user->tokens()->delete();
 
