@@ -1,6 +1,14 @@
 <?php
 
 declare(strict_types=1);
+
+use App\Actions\Auth\IssueAuthToken;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Sleep;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /*
@@ -15,8 +23,17 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
- // ->use(RefreshDatabase::class)
-    ->in('Feature');
+    ->use(RefreshDatabase::class)
+    ->beforeEach(function (): void {
+        Str::createRandomStringsNormally();
+        Str::createUuidsNormally();
+        Http::preventStrayRequests();
+        Process::preventStrayProcesses();
+        Sleep::fake();
+
+        $this->freezeTime();
+    })
+    ->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -29,8 +46,6 @@ pest()->extend(TestCase::class)
 |
 */
 
-expect()->extend('toBeOne', fn () => $this->toBe(1));
-
 /*
 |--------------------------------------------------------------------------
 | Functions
@@ -42,7 +57,22 @@ expect()->extend('toBeOne', fn () => $this->toBe(1));
 |
 */
 
-function something(): void
+function issueApiToken(User $user, string $deviceId = 'device-1', string $deviceName = 'iPhone'): string
 {
-    // ..
+    return resolve(IssueAuthToken::class)->handle($user, $deviceName, $deviceId);
+}
+
+function assertApiTokenAuthenticates(string $token): void
+{
+    test()->withToken($token)
+        ->putJson('/api/v1/user', [])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['name', 'email', 'device_id']);
+}
+
+function assertApiTokenIsRejected(string $token): void
+{
+    test()->withToken($token)
+        ->putJson('/api/v1/user', [])
+        ->assertUnauthorized();
 }
