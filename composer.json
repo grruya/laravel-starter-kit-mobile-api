@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "grruya/laravel-mobile-api-starter-kit",
+    "name": "gruya/laravel-mobile-api-starter-kit",
     "type": "project",
     "description": "Minimal type safe starter kit for mobile-first apps with OTP and action pattern.",
     "keywords": [
@@ -57,9 +57,20 @@
             "Composer\\Config::disableProcessTimeout",
             "sh -c \"trap 'jobs -p | xargs kill 2>/dev/null' EXIT; php artisan serve & php artisan queue:listen --tries=1 --timeout=0 & php artisan pail --timeout=0 & wait\""
         ],
-        "test": [
+        "refactor": "rector",
+        "lint": "pint --parallel",
+        "test:refactor": "rector --dry-run",
+        "test:lint": "pint --parallel --test",
+        "test:types": "phpstan analyse --ansi",
+        "test:unit": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "test": [
+            "@test:refactor",
+            "@test:lint",
+            "@test:types",
+            "@test:unit"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
