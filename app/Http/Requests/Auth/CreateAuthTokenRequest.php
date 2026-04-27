@@ -22,7 +22,7 @@ final class CreateAuthTokenRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'lowercase', 'email'],
             'password' => ['required', 'string'],
             'device_id' => $this->deviceIdRules(),
             'device_name' => $this->deviceNameRules(),

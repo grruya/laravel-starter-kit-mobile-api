@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 final readonly class DeleteUser
 {
     public function handle(User $user): void
     {
-        $user->delete();
+        DB::transaction(function () use ($user): void {
+            $user->tokens()->delete();
+            $user->oneTimePasswords()->delete();
+            $user->delete();
+        });
     }
 }

@@ -9,12 +9,18 @@ use App\Http\Requests\Concerns\PasswordValidationRules;
 use App\Models\User;
 use App\Rules\ValidEmail;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 final class CreateUserRequest extends FormRequest
 {
     use DeviceValidationRules;
     use PasswordValidationRules;
+
+    public function authorize(): bool
+    {
+        return ! Auth::guard('sanctum')->check();
+    }
 
     /**
      * @return array<string, array<mixed>|string>

@@ -39,6 +39,10 @@ final readonly class UserPasswordController
             event(new Verified($user));
         }
 
+        $user->oneTimePasswords()
+            ->where('purpose', OneTimePasswordPurpose::EmailVerification->value)
+            ->delete();
+
         return response()->json([
             'message' => 'Password reset successfully',
         ]);

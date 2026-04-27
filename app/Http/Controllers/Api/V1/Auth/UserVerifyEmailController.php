@@ -16,8 +16,8 @@ final readonly class UserVerifyEmailController
 {
     public function __invoke(
         VerifyEmailCodeRequest $request,
-        #[CurrentUser] User $user,
         ConsumeOneTimePassword $consumeOneTimePassword,
+        #[CurrentUser] User $user,
     ): JsonResponse {
         if ($user->hasVerifiedEmail()) {
             return response()->json([

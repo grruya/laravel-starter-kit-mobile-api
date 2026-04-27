@@ -19,7 +19,7 @@ final readonly class IssueOneTimePassword
     public function handle(
         User $user,
         OneTimePasswordPurpose $purpose,
-        #[SensitiveParameter] ?string $deviceId = null,
+        #[SensitiveParameter] string $deviceId,
     ): void {
         $code = '';
         $oneTimePassword = null;
@@ -52,7 +52,7 @@ final readonly class IssueOneTimePassword
                 ],
                 [
                     'code_hash' => Hash::make($code),
-                    'device_id_hash' => $deviceId === null ? null : hash('sha256', $deviceId),
+                    'device_id_hash' => hash('sha256', $deviceId),
                     'attempts' => 0,
                     'sent_at' => now(),
                     'expires_at' => now()->addMinutes(Config::integer('otp.expires_in_minutes')),

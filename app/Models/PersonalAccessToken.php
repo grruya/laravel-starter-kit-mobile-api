@@ -32,7 +32,7 @@ final class PersonalAccessToken extends SanctumPersonalAccessToken
     /**
      * @return array<string, string>
      */
-    protected function casts(): array
+    public function casts(): array
     {
         return [
             'id' => 'integer',
