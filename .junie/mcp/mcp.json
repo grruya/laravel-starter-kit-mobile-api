@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/gruja/Library/Application Support/Herd/bin/php85",
+            "args": [
+                "/Users/gruja/Main/projects/laravel-starter-kit-mobile-api/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

@@ -2,7 +2,3 @@
 command = "php"
 args = ["artisan", "boost:mcp"]
 cwd = "/Users/gruja/Main/projects/laravel-starter-kit-mobile-api"
-
-[agents]
-max_threads = 6
-max_depth = 1
